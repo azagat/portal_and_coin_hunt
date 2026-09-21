@@ -1,2 +1,2 @@
-# portal_and_coin_hunt
-A VR game where you find coins and go through portals.
+# Portal and Coin Hunt
+A VR prototype game developed using Godot. Find coins and go through portals!
