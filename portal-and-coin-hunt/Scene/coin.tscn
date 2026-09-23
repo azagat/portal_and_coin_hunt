@@ -1,0 +1,96 @@
+[gd_scene format=3 uid="uid://d10hjhmwtjvlj"]
+
+[sub_resource type="Shader" id="Shader_coin"]
+code = "shader_type spatial;
+render_mode unshaded, cull_back;
+
+uniform vec4 base_color : source_color = vec4(0.85, 0.62, 0.12, 1.0);
+uniform vec4 rim_color : source_color = vec4(1.0, 0.97, 0.85, 1.0);
+uniform float rim_power : hint_range(0.5, 8.0) = 3.0;
+
+void fragment() {
+	vec3 view_dir = normalize(VIEW);
+	float fresnel = pow(1.0 - clamp(dot(NORMAL, view_dir), 0.0, 1.0), rim_power);
+	ALBEDO = mix(base_color.rgb, rim_color.rgb, fresnel * 0.6);
+}
+"
+
+[sub_resource type="ShaderMaterial" id="Mat_gold_body"]
+render_priority = 0
+shader = SubResource("Shader_coin")
+shader_parameter/base_color = Color(0.85, 0.62, 0.12, 1)
+shader_parameter/rim_color = Color(1, 0.97, 0.85, 1)
+shader_parameter/rim_power = 3.0
+
+[sub_resource type="ShaderMaterial" id="Mat_gold_emblem"]
+render_priority = 0
+shader = SubResource("Shader_coin")
+shader_parameter/base_color = Color(1, 0.85, 0.35, 1)
+shader_parameter/rim_color = Color(1, 0.97, 0.85, 1)
+shader_parameter/rim_power = 2.0
+
+[sub_resource type="Animation" id="Anim_idle"]
+resource_name = "idle"
+length = 2.0
+loop_mode = 1
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath(".:rotation_degrees:y")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 2),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [0.0, 360.0]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath(".:position:y")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0, 1, 2),
+"transitions": PackedFloat32Array(1, 1, 1),
+"update": 0,
+"values": [0.0, 0.08, 0.0]
+}
+
+[sub_resource type="AnimationLibrary" id="AnimLib_coin"]
+_data = {
+&"idle": SubResource("Anim_idle")
+}
+
+[node name="Coin" type="Node3D" unique_id=139890137]
+
+[node name="Model" type="CSGCombiner3D" parent="." unique_id=2147389263]
+transform = Transform3D(0.3, 0, 0, 0, 0.3, 0, 0, 0, 0.3, 0, 0, 0)
+
+[node name="Body" type="CSGCylinder3D" parent="Model" unique_id=39728826]
+transform = Transform3D(1, 0, 0, 0, 0, 1, 0, -1, 0, 0, 0, 0)
+height = 0.12
+sides = 16
+smooth_faces = false
+material = SubResource("Mat_gold_body")
+
+[node name="EmblemFront" type="CSGCylinder3D" parent="Model" unique_id=1226964260]
+transform = Transform3D(1, 0, 0, 0, 0, 1, 0, -1, 0, 0, 0, 0.065)
+radius = 0.32
+height = 0.03
+sides = 16
+smooth_faces = false
+material = SubResource("Mat_gold_emblem")
+
+[node name="EmblemBack" type="CSGCylinder3D" parent="Model" unique_id=1810729981]
+transform = Transform3D(1, 0, 0, 0, 0, 1, 0, -1, 0, 0, 0, -0.065)
+radius = 0.32
+height = 0.03
+sides = 16
+smooth_faces = false
+material = SubResource("Mat_gold_emblem")
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="." unique_id=79950330]
+libraries/ = SubResource("AnimLib_coin")
+autoplay = &"idle"
