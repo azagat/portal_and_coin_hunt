@@ -1,0 +1,808 @@
+[gd_scene format=3 uid="uid://bkijqanjqatb1"]
+
+[ext_resource type="PackedScene" uid="uid://d10hjhmwtjvlj" path="res://Scene/coin.tscn" id="ext_coin"]
+[ext_resource type="PackedScene" path="res://Scene/portal_door.tscn" id="ext_portal_door"]
+
+[sub_resource type="Environment" id="Env_bg"]
+background_mode = 1
+background_color = Color(0.9, 0.93, 0.88, 1)
+ambient_light_source = 2
+ambient_light_color = Color(0.9, 0.93, 0.88, 1)
+ambient_light_energy = 0.6
+
+[sub_resource type="Shader" id="Shader_top"]
+code = "shader_type spatial;
+render_mode unshaded, cull_back;
+
+uniform vec4 base_color : source_color = vec4(0.8, 0.78, 0.74, 1.0);
+uniform vec4 top_color : source_color = vec4(0.75, 0.85, 0.35, 1.0);
+uniform float top_threshold : hint_range(0.0, 1.0) = 0.65;
+
+varying vec3 world_normal;
+
+void vertex() {
+	world_normal = normalize((MODEL_MATRIX * vec4(NORMAL, 0.0)).xyz);
+}
+
+void fragment() {
+	float upness = dot(normalize(world_normal), vec3(0.0, 1.0, 0.0));
+	float mask = smoothstep(top_threshold - 0.05, top_threshold + 0.05, upness);
+	ALBEDO = mix(base_color, top_color, mask);
+}
+"
+
+[sub_resource type="ShaderMaterial" id="Mat_stone"]
+render_priority = 0
+shader = SubResource("Shader_top")
+
+[sub_resource type="ShaderMaterial" id="Mat_marble"]
+render_priority = 0
+shader = SubResource("Shader_top")
+
+[sub_resource type="ShaderMaterial" id="Mat_purple"]
+render_priority = 0
+shader = SubResource("Shader_top")
+
+[sub_resource type="ShaderMaterial" id="Mat_totem_yellow"]
+render_priority = 0
+shader = SubResource("Shader_top")
+
+[sub_resource type="ShaderMaterial" id="Mat_totem_cyan"]
+render_priority = 0
+shader = SubResource("Shader_top")
+
+[sub_resource type="ShaderMaterial" id="Mat_totem_eye"]
+render_priority = 0
+shader = SubResource("Shader_top")
+
+[node name="MonumentDemo" type="Node3D" unique_id=624653170]
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="." unique_id=1882168737]
+environment = SubResource("Env_bg")
+
+[node name="DirectionalLight3D" type="DirectionalLight3D" parent="." unique_id=2099456619]
+transform = Transform3D(0.9990386, -0.017956192, 0.03782239, 0, 0.9030462, 0.4288743, -0.04187212, -0.42842177, 0.902415, 10, 15, 10)
+sky_mode = 1
+
+[node name="Camera3D" type="Camera3D" parent="." unique_id=570398054]
+transform = Transform3D(0.70302, -4.399929e-06, -0.71117014, -0.2851081, 0.9161201, -0.2818463, 0.65151846, 0.40090394, 0.64404947, -0.12537098, 6.4137955, -0.6430912)
+projection = 1
+current = true
+size = 27.0
+
+[node name="Island" type="CSGCombiner3D" parent="." unique_id=636380548]
+use_collision = true
+
+[node name="LeftTower" type="CSGCombiner3D" parent="Island" unique_id=1280954254]
+
+[node name="Body" type="CSGBox3D" parent="Island/LeftTower" unique_id=1050806163]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -9, 4, 0)
+size = Vector3(2.2, 10, 3.2)
+material = SubResource("Mat_stone")
+
+[node name="DoorSlit" type="CSGBox3D" parent="Island/LeftTower" unique_id=68482716]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -9, -0.2, 1.6)
+operation = 2
+size = Vector3(0.6, 1.5, 0.3)
+
+[node name="PortalDoor" parent="Island/LeftTower" unique_id=327143948 instance=ExtResource("ext_portal_door")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -9, -0.2, 1.65)
+
+[node name="WindowSlit" type="CSGBox3D" parent="Island/LeftTower" unique_id=1604618256]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -9, 3, 1.6)
+operation = 2
+size = Vector3(0.5, 1.8, 0.3)
+
+[node name="CharacterLedge" type="CSGBox3D" parent="Island/LeftTower" unique_id=937652758]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -7.8, -0.8, 0)
+size = Vector3(3, 0.5, 3.2)
+material = SubResource("Mat_stone")
+
+[node name="Coin" parent="Island" unique_id=446211403 instance=ExtResource("ext_coin")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.9097598, 3.6902485, -0.4835354)
+
+[node name="Bridge1" type="CSGBox3D" parent="Island" unique_id=1870028163]
+transform = Transform3D(0.9206, 0.3905, 0, -0.3905, 0.9206, 0, 0, 0, 1, -6.15, 0.15, 0)
+size = Vector3(3.5847, 0.35, 2.2)
+material = SubResource("Mat_stone")
+
+[node name="Gazebo" type="CSGCombiner3D" parent="Island" unique_id=1322244818]
+
+[node name="Platform" type="CSGBox3D" parent="Island/Gazebo" unique_id=2026901465]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3, 0.6, 0)
+size = Vector3(3, 0.4, 2.4)
+material = SubResource("Mat_stone")
+
+[node name="ColumnFL" type="CSGBox3D" parent="Island/Gazebo" unique_id=1048964847]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3.9, 1.6, 0.9)
+size = Vector3(0.25, 1.6, 0.25)
+material = SubResource("Mat_marble")
+
+[node name="ColumnFR" type="CSGBox3D" parent="Island/Gazebo" unique_id=648154924]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.1, 1.6, 0.9)
+size = Vector3(0.25, 1.6, 0.25)
+material = SubResource("Mat_marble")
+
+[node name="ColumnBL" type="CSGBox3D" parent="Island/Gazebo" unique_id=641896859]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3.9, 1.6, -0.9)
+size = Vector3(0.25, 1.6, 0.25)
+material = SubResource("Mat_marble")
+
+[node name="ColumnBR" type="CSGBox3D" parent="Island/Gazebo" unique_id=61301290]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.1, 1.6, -0.9)
+size = Vector3(0.25, 1.6, 0.25)
+material = SubResource("Mat_marble")
+
+[node name="Roof" type="CSGBox3D" parent="Island/Gazebo" unique_id=1356412239]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3, 2.6, 0)
+size = Vector3(3.2, 0.4, 2.6)
+material = SubResource("Mat_marble")
+
+[node name="Bridge2" type="CSGBox3D" parent="Island" unique_id=671429049]
+transform = Transform3D(0.9983, 0.0587, 0, -0.0587, 0.9983, 0, 0, 0, 1, 0.30369413, 2.9000003, 0.0036113262)
+size = Vector3(3.4059, 0.35, 2)
+material = SubResource("Mat_stone")
+
+[node name="Ladder" type="CSGCombiner3D" parent="Island" unique_id=912767724]
+
+[node name="Rung0" type="CSGBox3D" parent="Island/Ladder" unique_id=771324000]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.3, 3.3, 0)
+size = Vector3(0.6, 0.15, 1)
+material = SubResource("Mat_marble")
+
+[node name="Rung1" type="CSGBox3D" parent="Island/Ladder" unique_id=557411817]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.47, 3.87, 0)
+size = Vector3(0.6, 0.15, 1)
+material = SubResource("Mat_marble")
+
+[node name="Rung2" type="CSGBox3D" parent="Island/Ladder" unique_id=1337605960]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.64, 4.44, 0)
+size = Vector3(0.6, 0.15, 1)
+material = SubResource("Mat_marble")
+
+[node name="Rung3" type="CSGBox3D" parent="Island/Ladder" unique_id=343357983]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.81, 5.02, 0)
+size = Vector3(0.6, 0.15, 1)
+material = SubResource("Mat_marble")
+
+[node name="Rung4" type="CSGBox3D" parent="Island/Ladder" unique_id=1616281115]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.99, 5.59, 0)
+size = Vector3(0.6, 0.15, 1)
+material = SubResource("Mat_marble")
+
+[node name="Rung5" type="CSGBox3D" parent="Island/Ladder" unique_id=778197957]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.16, 6.16, 0)
+size = Vector3(0.6, 0.15, 1)
+material = SubResource("Mat_marble")
+
+[node name="Rung6" type="CSGBox3D" parent="Island/Ladder" unique_id=1414925287]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.33, 6.73, 0)
+size = Vector3(0.6, 0.15, 1)
+material = SubResource("Mat_marble")
+
+[node name="Rung7" type="CSGBox3D" parent="Island/Ladder" unique_id=1012542600]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.5, 7.3, 0)
+size = Vector3(0.6, 0.15, 1)
+material = SubResource("Mat_marble")
+
+[node name="SecondTower" type="CSGCombiner3D" parent="Island" unique_id=1067794466]
+
+[node name="Body" type="CSGBox3D" parent="Island/SecondTower" unique_id=564453409]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.8, 6.5, 0)
+size = Vector3(1.6, 4, 1.6)
+material = SubResource("Mat_stone")
+
+[node name="ArchCut" type="CSGCylinder3D" parent="Island/SecondTower" unique_id=560024126]
+transform = Transform3D(1, 0, 0, 0, 0, 1, 0, -1, 0, 3.8, 6.5, 0)
+operation = 2
+radius = 0.45
+smooth_faces = false
+
+[node name="TopCap" type="CSGBox3D" parent="Island/SecondTower" unique_id=1503865889]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.8, 8.7, 0)
+size = Vector3(2, 0.4, 2)
+material = SubResource("Mat_stone")
+
+[node name="ExtendingLedge" type="CSGBox3D" parent="Island" unique_id=1477542742]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 6.5, 8.7, 0)
+size = Vector3(3.4, 0.4, 2)
+material = SubResource("Mat_stone")
+
+[node name="LedgeToTotem" type="CSGBox3D" parent="Island" unique_id=646390477]
+transform = Transform3D(0.9968, 0.0797, 0, -0.0797, 0.9968, 0, 0, 0, 1, 8.25, 8.8, 0.9)
+size = Vector3(2.508, 0.35, 1.8)
+material = SubResource("Mat_stone")
+
+[node name="WallSlab" type="CSGBox3D" parent="Island" unique_id=1476132049]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 11, 4, 0)
+size = Vector3(1.4, 13, 9)
+material = SubResource("Mat_purple")
+
+[node name="WallWindow1" type="CSGBox3D" parent="Island" unique_id=865923207]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 11, 7, 4.5)
+operation = 2
+size = Vector3(0.5, 1.8, 0.3)
+
+[node name="WallWindow2" type="CSGBox3D" parent="Island" unique_id=2047333409]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 11, 1.5, 4.5)
+operation = 2
+size = Vector3(0.5, 1.8, 0.3)
+
+[node name="TotemPlatform" type="CSGBox3D" parent="Island" unique_id=1382022555]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 9.5, 8.9, 1.8)
+size = Vector3(1.8, 0.4, 1.8)
+material = SubResource("Mat_stone")
+
+[node name="Totem" type="CSGCombiner3D" parent="Island" unique_id=1965580363]
+
+[node name="TotemBase" type="CSGBox3D" parent="Island/Totem" unique_id=1974674315]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 9.5, 9.7, 1.8)
+size = Vector3(0.9, 0.7, 0.9)
+material = SubResource("Mat_totem_yellow")
+
+[node name="TotemMid" type="CSGBox3D" parent="Island/Totem" unique_id=989708629]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 9.5, 10.3, 1.8)
+size = Vector3(0.75, 0.6, 0.75)
+material = SubResource("Mat_totem_cyan")
+
+[node name="TotemUpper" type="CSGBox3D" parent="Island/Totem" unique_id=1940412115]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 9.5, 10.9, 1.8)
+size = Vector3(0.65, 0.6, 0.65)
+material = SubResource("Mat_totem_yellow")
+
+[node name="TotemEye" type="CSGSphere3D" parent="Island/Totem" unique_id=918582814]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 9.5, 10.9, 2.15)
+radius = 0.18
+material = SubResource("Mat_totem_eye")
+
+[node name="TotemTop" type="CSGCylinder3D" parent="Island/Totem" unique_id=892786967]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 9.5, 11.5, 1.8)
+radius = 0.35
+height = 0.6
+sides = 6
+smooth_faces = false
+material = SubResource("Mat_totem_yellow")
+
+[node name="FloatIsland_Back0" type="CSGBox3D" parent="Island" unique_id=703857210]
+transform = Transform3D(0.7792, 0, 0.6268, 0, 1, 0, -0.6268, 0, 0.7792, 4.904, -0.7124, -7.3498)
+size = Vector3(1.312, 0.695, 1.947)
+material = SubResource("Mat_stone")
+
+[node name="FloatIsland_Back0_Spike" type="CSGBox3D" parent="Island" unique_id=776918782]
+transform = Transform3D(0.7792, 0, 0.6268, 0, 1, 0, -0.6268, 0, 0.7792, 5.0781, 0.2566, -7.4998)
+size = Vector3(0.332, 1.343, 0.744)
+material = SubResource("Mat_stone")
+
+[node name="FloatIsland_Back1" type="CSGBox3D" parent="Island" unique_id=1923119687]
+transform = Transform3D(-0.9604, 0, 0.2786, 0, 1, 0, -0.2786, 0, -0.9604, -12.1657, 1.5143, -5.9679)
+size = Vector3(1.037, 0.48, 1.91)
+material = SubResource("Mat_stone")
+
+[node name="FloatIsland_Back2" type="CSGBox3D" parent="Island" unique_id=308147927]
+transform = Transform3D(0.9641, 0, 0.2656, 0, 1, 0, -0.2656, 0, 0.9641, 9.6641, -0.9253, -4.1651)
+size = Vector3(1.977, 0.536, 1.218)
+material = SubResource("Mat_stone")
+
+[node name="FloatIsland_Back2_Spike" type="CSGBox3D" parent="Island" unique_id=325414929]
+transform = Transform3D(0.9641, 0, 0.2656, 0, 1, 0, -0.2656, 0, 0.9641, 9.3363, -0.056, -4.1719)
+size = Vector3(0.512, 1.302, 0.477)
+material = SubResource("Mat_stone")
+
+[node name="FloatIsland_Back3" type="CSGBox3D" parent="Island" unique_id=468754838]
+transform = Transform3D(0.9858, 0, 0.1681, 0, 1, 0, -0.1681, 0, 0.9858, -10.2919, 8.7462, -5.3776)
+size = Vector3(2.13, 0.692, 1.751)
+material = SubResource("Mat_stone")
+
+[node name="FloatIsland_Back4" type="CSGBox3D" parent="Island" unique_id=1180453764]
+transform = Transform3D(0.1384, 0, -0.9904, 0, 1, 0, 0.9904, 0, 0.1384, 10.2233, 6.113, -3.8298)
+size = Vector3(1.808, 0.682, 1.064)
+material = SubResource("Mat_stone")
+
+[node name="FloatIsland_Back4_Spike" type="CSGBox3D" parent="Island" unique_id=2057466490]
+transform = Transform3D(0.1384, 0, -0.9904, 0, 1, 0, 0.9904, 0, 0.1384, 9.9545, 7.0081, -3.8403)
+size = Vector3(0.471, 1.208, 0.388)
+material = SubResource("Mat_stone")
+
+[node name="FloatIsland_Back5" type="CSGBox3D" parent="Island" unique_id=1777671706]
+transform = Transform3D(0.2517, 0, -0.9678, 0, 1, 0, 0.9678, 0, 0.2517, -6.4819, 0.1615, -7.3322)
+size = Vector3(1.89, 0.546, 1.518)
+material = SubResource("Mat_stone")
+
+[node name="FloatIsland_Back6" type="CSGBox3D" parent="Island" unique_id=1411210224]
+transform = Transform3D(0.9978, 0, 0.0658, 0, 1, 0, -0.0658, 0, 0.9978, 5.145, 6.005, -7.9732)
+size = Vector3(2.021, 0.465, 1.531)
+material = SubResource("Mat_stone")
+
+[node name="FloatIsland_Front0" type="CSGBox3D" parent="Island" unique_id=1309833739]
+transform = Transform3D(-0.1112, 0, -0.9938, 0, 1, 0, 0.9938, 0, -0.1112, 6.1692, 8.6928, 9.768)
+size = Vector3(1.321, 0.413, 1.442)
+material = SubResource("Mat_stone")
+
+[node name="FloatIsland_Front1" type="CSGBox3D" parent="Island" unique_id=255421308]
+transform = Transform3D(-0.0934, 0, -0.9956, 0, 1, 0, 0.9956, 0, -0.0934, 11.5383, 2.6188, 9.1049)
+size = Vector3(1.554, 0.766, 1.642)
+material = SubResource("Mat_stone")
+
+[node name="FloatIsland_Front2" type="CSGBox3D" parent="Island" unique_id=675902730]
+transform = Transform3D(-0.9982, 0, 0.0598, 0, 1, 0, -0.0598, 0, -0.9982, -5.6432, 5.7227, 10.438)
+size = Vector3(1.559, 0.488, 2.397)
+material = SubResource("Mat_stone")
+
+[node name="FloatIsland_Front2_Spike" type="CSGBox3D" parent="Island" unique_id=598372103]
+transform = Transform3D(-0.9982, 0, 0.0598, 0, 1, 0, -0.0598, 0, -0.9982, -5.6912, 6.3226, 10.1617)
+size = Vector3(0.518, 0.812, 0.913)
+material = SubResource("Mat_stone")
+
+[node name="FloatIsland_Front3" type="CSGBox3D" parent="Island" unique_id=1125700067]
+transform = Transform3D(0.9997, 0, 0.0244, 0, 1, 0, -0.0244, 0, 0.9997, -9.9298, 6.2156, 9.8564)
+size = Vector3(1.591, 0.425, 1.534)
+material = SubResource("Mat_stone")
+
+[node name="FloatIsland_Front4" type="CSGBox3D" parent="Island" unique_id=206151508]
+transform = Transform3D(-0.6328, 0, 0.7744, 0, 1, 0, -0.7744, 0, -0.6328, 11.1018, -0.868, 9.464)
+size = Vector3(1.954, 0.615, 1.374)
+material = SubResource("Mat_stone")
+
+[node name="FloatIsland_Front4_Spike" type="CSGBox3D" parent="Island" unique_id=1648366493]
+transform = Transform3D(-0.6328, 0, 0.7744, 0, 1, 0, -0.7744, 0, -0.6328, 10.9546, -0.0186, 9.736)
+size = Vector3(0.647, 1.184, 0.385)
+material = SubResource("Mat_stone")
+
+[node name="FloatIsland_Front5" type="CSGBox3D" parent="Island" unique_id=481111574]
+transform = Transform3D(0.8531, 0, 0.5218, 0, 1, 0, -0.5218, 0, 0.8531, -0.18554348, 9.9689, 11.190334)
+size = Vector3(2.0922148, 0.6, 2.8546143)
+material = SubResource("Mat_marble")
+
+[node name="FloatIsland_Front5_Spike" type="CSGBox3D" parent="Island" unique_id=1799474829]
+transform = Transform3D(0.8531, 0, 0.5218, 0, 1, 0, -0.5218, 0, 0.8531, -0.5032, 10.6942, 10.1795)
+size = Vector3(0.476, 0.95, 0.41)
+material = SubResource("Mat_marble")
+
+[node name="FloatIsland_Front6" type="CSGBox3D" parent="Island" unique_id=1934652709]
+transform = Transform3D(-0.9819, 0, 0.1896, 0, 1, 0, -0.1896, 0, -0.9819, 4.8906, 6.0032, 6.3406)
+size = Vector3(2.068, 0.616, 2.09)
+material = SubResource("Mat_stone")
+
+[node name="FloatIsland_Front6_Spike" type="CSGBox3D" parent="Island" unique_id=1390172503]
+transform = Transform3D(-0.9819, 0, 0.1896, 0, 1, 0, -0.1896, 0, -0.9819, 4.6592, 6.7964, 5.982)
+size = Vector3(0.622, 1.071, 0.595)
+material = SubResource("Mat_stone")
+
+[node name="FloatIsland2_back0" type="CSGBox3D" parent="Island" unique_id=1481525536]
+transform = Transform3D(0.9963, 0, 0.0856, 0, 1, 0, -0.0856, 0, 0.9963, -0.6247, 10.8986, -6.0469)
+size = Vector3(2.452, 0.772, 1.698)
+material = SubResource("Mat_marble")
+
+[node name="FloatIsland2_back0_Step0" type="CSGBox3D" parent="Island" unique_id=1116203437]
+transform = Transform3D(0.9963, 0, 0.0856, 0, 1, 0, -0.0856, 0, 0.9963, -1.2355, 11.3548, -6.0994)
+size = Vector3(0.55, 0.14, 0.75)
+material = SubResource("Mat_marble")
+
+[node name="FloatIsland2_back0_Step1" type="CSGBox3D" parent="Island" unique_id=1894604625]
+transform = Transform3D(0.9963, 0, 0.0856, 0, 1, 0, -0.0856, 0, 0.9963, -0.7373, 11.4948, -6.0566)
+size = Vector3(0.55, 0.14, 0.75)
+material = SubResource("Mat_marble")
+
+[node name="FloatIsland2_back0_Step2" type="CSGBox3D" parent="Island" unique_id=1099312017]
+transform = Transform3D(0.9963, 0, 0.0856, 0, 1, 0, -0.0856, 0, 0.9963, -0.2392, 11.6348, -6.0138)
+size = Vector3(0.55, 0.14, 0.75)
+material = SubResource("Mat_marble")
+
+[node name="FloatIsland2_back0_Step3" type="CSGBox3D" parent="Island" unique_id=585113006]
+transform = Transform3D(0.9963, 0, 0.0856, 0, 1, 0, -0.0856, 0, 0.9963, 0.259, 11.7748, -5.971)
+size = Vector3(0.55, 0.14, 0.75)
+material = SubResource("Mat_marble")
+
+[node name="FloatIsland2_front1" type="CSGBox3D" parent="Island" unique_id=1981126228]
+transform = Transform3D(0.9889, 0, 0.1485, 0, 1, 0, -0.1485, 0, 0.9889, 2.1305, -1.0003, 7.897)
+size = Vector3(1.461, 0.734, 1.344)
+material = SubResource("Mat_stone")
+
+[node name="FloatIsland2_front1_Step0" type="CSGBox3D" parent="Island" unique_id=748399310]
+transform = Transform3D(0.9889, 0, 0.1485, 0, 1, 0, -0.1485, 0, 0.9889, 1.7693, -0.5635, 7.8428)
+size = Vector3(0.55, 0.14, 0.75)
+material = SubResource("Mat_marble")
+
+[node name="FloatIsland2_front1_Step1" type="CSGBox3D" parent="Island" unique_id=618871958]
+transform = Transform3D(0.9889, 0, 0.1485, 0, 1, 0, -0.1485, 0, 0.9889, 2.2638, -0.4235, 7.917)
+size = Vector3(0.55, 0.14, 0.75)
+material = SubResource("Mat_marble")
+
+[node name="FloatIsland2_front1_Step2" type="CSGBox3D" parent="Island" unique_id=21773840]
+transform = Transform3D(0.9889, 0, 0.1485, 0, 1, 0, -0.1485, 0, 0.9889, 2.7582, -0.2835, 7.9912)
+size = Vector3(0.55, 0.14, 0.75)
+material = SubResource("Mat_marble")
+
+[node name="FloatIsland2_front1_Step3" type="CSGBox3D" parent="Island" unique_id=1361862643]
+transform = Transform3D(0.9889, 0, 0.1485, 0, 1, 0, -0.1485, 0, 0.9889, 3.2527, -0.1435, 8.0655)
+size = Vector3(0.55, 0.14, 0.75)
+material = SubResource("Mat_marble")
+
+[node name="FloatIsland2_front2" type="CSGBox3D" parent="Island" unique_id=1924308559]
+transform = Transform3D(-0.3178, 0, 0.9482, 0, 1, 0, -0.9482, 0, -0.3178, 4.0448, 9.4588, 5.7855)
+size = Vector3(1.644, 0.507, 1.314)
+material = SubResource("Mat_marble")
+
+[node name="FloatIsland2_back3" type="CSGBox3D" parent="Island" unique_id=1920905720]
+transform = Transform3D(-0.8305, 0, -0.557, 0, 1, 0, 0.557, 0, -0.8305, 6.7588, 9.6023, -8.8785)
+size = Vector3(1.801, 0.661, 1.947)
+material = SubResource("Mat_stone")
+
+[node name="FloatIsland2_back3_Spike" type="CSGBox3D" parent="Island" unique_id=1468338128]
+transform = Transform3D(-0.8305, 0, -0.557, 0, 1, 0, 0.557, 0, -0.8305, 6.7421, 10.4028, -8.894)
+size = Vector3(0.634, 1.04, 0.591)
+material = SubResource("Mat_stone")
+
+[node name="FloatIsland2_back4" type="CSGBox3D" parent="Island" unique_id=1575130317]
+transform = Transform3D(-0.2275, 0, -0.9738, 0, 1, 0, 0.9738, 0, -0.2275, 11.1037, 5.7101, -7.777)
+size = Vector3(2.094, 0.421, 2.368)
+material = SubResource("Mat_stone")
+
+[node name="FloatIsland2_back4_Plat" type="CSGBox3D" parent="Island" unique_id=2096626654]
+transform = Transform3D(-0.2275, 0, -0.9738, 0, 1, 0, 0.9738, 0, -0.2275, 11.1037, 6.0308, -7.777)
+size = Vector3(1.65, 0.22, 1.32)
+material = SubResource("Mat_stone")
+
+[node name="FloatIsland2_back4_ColFL" type="CSGBox3D" parent="Island" unique_id=1410253164]
+transform = Transform3D(-0.2275, 0, -0.9738, 0, 1, 0, 0.9738, 0, -0.2275, 11.9065, 6.5808, -7.2783)
+size = Vector3(0.138, 0.88, 0.138)
+material = SubResource("Mat_marble")
+
+[node name="FloatIsland2_back4_ColFR" type="CSGBox3D" parent="Island" unique_id=1414055528]
+transform = Transform3D(-0.2275, 0, -0.9738, 0, 1, 0, 0.9738, 0, -0.2275, 11.6024, 6.5808, -8.5798)
+size = Vector3(0.138, 0.88, 0.138)
+material = SubResource("Mat_marble")
+
+[node name="FloatIsland2_back4_ColBL" type="CSGBox3D" parent="Island" unique_id=1569637693]
+transform = Transform3D(-0.2275, 0, -0.9738, 0, 1, 0, 0.9738, 0, -0.2275, 10.605, 6.5808, -6.9742)
+size = Vector3(0.138, 0.88, 0.138)
+material = SubResource("Mat_marble")
+
+[node name="FloatIsland2_back4_ColBR" type="CSGBox3D" parent="Island" unique_id=388010938]
+transform = Transform3D(-0.2275, 0, -0.9738, 0, 1, 0, 0.9738, 0, -0.2275, 10.3009, 6.5808, -8.2757)
+size = Vector3(0.138, 0.88, 0.138)
+material = SubResource("Mat_marble")
+
+[node name="FloatIsland2_back4_Roof" type="CSGBox3D" parent="Island" unique_id=1815991125]
+transform = Transform3D(-0.2275, 0, -0.9738, 0, 1, 0, 0.9738, 0, -0.2275, 11.1037, 7.1308, -7.777)
+size = Vector3(1.76, 0.22, 1.43)
+material = SubResource("Mat_marble")
+
+[node name="FloatIsland2_front5" type="CSGBox3D" parent="Island" unique_id=1073787407]
+transform = Transform3D(-0.233, 0, -0.9725, 0, 1, 0, 0.9725, 0, -0.233, -10.7852, 6.8258, 6.363)
+size = Vector3(2.511, 0.679, 1.496)
+material = SubResource("Mat_marble")
+
+[node name="FloatIsland2_front5_Plat" type="CSGBox3D" parent="Island" unique_id=1603084764]
+transform = Transform3D(-0.233, 0, -0.9725, 0, 1, 0, 0.9725, 0, -0.233, -10.7852, 7.2752, 6.363)
+size = Vector3(1.65, 0.22, 1.32)
+material = SubResource("Mat_stone")
+
+[node name="FloatIsland2_front5_ColFL" type="CSGBox3D" parent="Island" unique_id=447323316]
+transform = Transform3D(-0.233, 0, -0.9725, 0, 1, 0, 0.9725, 0, -0.233, -9.9797, 7.8252, 6.8571)
+size = Vector3(0.138, 0.88, 0.138)
+material = SubResource("Mat_marble")
+
+[node name="FloatIsland2_front5_ColFR" type="CSGBox3D" parent="Island" unique_id=1605576566]
+transform = Transform3D(-0.233, 0, -0.9725, 0, 1, 0, 0.9725, 0, -0.233, -10.2911, 7.8252, 5.5574)
+size = Vector3(0.138, 0.88, 0.138)
+material = SubResource("Mat_marble")
+
+[node name="FloatIsland2_front5_ColBL" type="CSGBox3D" parent="Island" unique_id=1233006839]
+transform = Transform3D(-0.233, 0, -0.9725, 0, 1, 0, 0.9725, 0, -0.233, -11.2794, 7.8252, 7.1685)
+size = Vector3(0.138, 0.88, 0.138)
+material = SubResource("Mat_marble")
+
+[node name="FloatIsland2_front5_ColBR" type="CSGBox3D" parent="Island" unique_id=1907216494]
+transform = Transform3D(-0.233, 0, -0.9725, 0, 1, 0, 0.9725, 0, -0.233, -11.5908, 7.8252, 5.8688)
+size = Vector3(0.138, 0.88, 0.138)
+material = SubResource("Mat_marble")
+
+[node name="FloatIsland2_front5_Roof" type="CSGBox3D" parent="Island" unique_id=1745011312]
+transform = Transform3D(-0.233, 0, -0.9725, 0, 1, 0, 0.9725, 0, -0.233, -10.7852, 8.3752, 6.363)
+size = Vector3(1.76, 0.22, 1.43)
+material = SubResource("Mat_marble")
+
+[node name="FloatIsland2_back6" type="CSGBox3D" parent="Island" unique_id=481281787]
+transform = Transform3D(0.9968, 0, -0.0797, 0, 1, 0, 0.0797, 0, 0.9968, 10.4325, 8.7775, -5.9794)
+size = Vector3(2.19, 0.762, 2.496)
+material = SubResource("Mat_stone")
+
+[node name="FloatIsland2_back6_Step0" type="CSGBox3D" parent="Island" unique_id=998658273]
+transform = Transform3D(0.9968, 0, -0.0797, 0, 1, 0, 0.0797, 0, 0.9968, 7.5720615, 8.5302515, -5.9358)
+size = Vector3(0.55, 0.14, 0.75)
+material = SubResource("Mat_marble")
+
+[node name="FloatIsland2_back6_Step1" type="CSGBox3D" parent="Island" unique_id=1606730944]
+transform = Transform3D(0.9968, 0, -0.0797, 0, 1, 0, 0.0797, 0, 0.9968, 8.070462, 8.670252, -5.9756)
+size = Vector3(0.55, 0.14, 0.75)
+material = SubResource("Mat_marble")
+
+[node name="FloatIsland2_back6_Step2" type="CSGBox3D" parent="Island" unique_id=423359890]
+transform = Transform3D(0.9968, 0, -0.0797, 0, 1, 0, 0.0797, 0, 0.9968, 8.568862, 8.810252, -6.0155)
+size = Vector3(0.55, 0.14, 0.75)
+material = SubResource("Mat_marble")
+
+[node name="FloatIsland2_back6_Step3" type="CSGBox3D" parent="Island" unique_id=1897624608]
+transform = Transform3D(0.9968, 0, -0.0797, 0, 1, 0, 0.0797, 0, 0.9968, 9.067262, 8.950252, -6.0554)
+size = Vector3(0.55, 0.14, 0.75)
+material = SubResource("Mat_marble")
+
+[node name="FloatIsland2_back7" type="CSGBox3D" parent="Island" unique_id=720332564]
+transform = Transform3D(-0.452, 0, -0.892, 0, 1, 0, 0.892, 0, -0.452, -3.5563, 0.3476, -6.3447)
+size = Vector3(1.766, 0.656, 1.506)
+material = SubResource("Mat_marble")
+
+[node name="FloatIsland2_back7_Spike" type="CSGBox3D" parent="Island" unique_id=76672293]
+transform = Transform3D(-0.452, 0, -0.892, 0, 1, 0, 0.892, 0, -0.452, -3.7393, 1.2403, -6.2926)
+size = Vector3(0.554, 1.23, 0.51)
+material = SubResource("Mat_marble")
+
+[node name="FloatIsland2_front8" type="CSGBox3D" parent="Island" unique_id=2056414846]
+transform = Transform3D(0.9015, 0, 0.4327, 0, 1, 0, -0.4327, 0, 0.9015, 12.0657, 7.1253, 5.6127)
+size = Vector3(2.592, 0.429, 1.427)
+material = SubResource("Mat_stone")
+
+[node name="FloatIsland2_front8_Plat" type="CSGBox3D" parent="Island" unique_id=1008291857]
+transform = Transform3D(0.9015, 0, 0.4327, 0, 1, 0, -0.4327, 0, 0.9015, 12.0657, 7.4496, 5.6127)
+size = Vector3(1.65, 0.22, 1.32)
+material = SubResource("Mat_stone")
+
+[node name="FloatIsland2_front8_ColFL" type="CSGBox3D" parent="Island" unique_id=128896166]
+transform = Transform3D(0.9015, 0, 0.4327, 0, 1, 0, -0.4327, 0, 0.9015, 11.1741, 7.9996, 5.926)
+size = Vector3(0.138, 0.88, 0.138)
+material = SubResource("Mat_marble")
+
+[node name="FloatIsland2_front8_ColFR" type="CSGBox3D" parent="Island" unique_id=467226429]
+transform = Transform3D(0.9015, 0, 0.4327, 0, 1, 0, -0.4327, 0, 0.9015, 12.379, 7.9996, 6.5043)
+size = Vector3(0.138, 0.88, 0.138)
+material = SubResource("Mat_marble")
+
+[node name="FloatIsland2_front8_ColBL" type="CSGBox3D" parent="Island" unique_id=952927182]
+transform = Transform3D(0.9015, 0, 0.4327, 0, 1, 0, -0.4327, 0, 0.9015, 11.7524, 7.9996, 4.7211)
+size = Vector3(0.138, 0.88, 0.138)
+material = SubResource("Mat_marble")
+
+[node name="FloatIsland2_front8_ColBR" type="CSGBox3D" parent="Island" unique_id=1795549396]
+transform = Transform3D(0.9015, 0, 0.4327, 0, 1, 0, -0.4327, 0, 0.9015, 12.9573, 7.9996, 5.2994)
+size = Vector3(0.138, 0.88, 0.138)
+material = SubResource("Mat_marble")
+
+[node name="FloatIsland2_front8_Roof" type="CSGBox3D" parent="Island" unique_id=19165568]
+transform = Transform3D(0.9015, 0, 0.4327, 0, 1, 0, -0.4327, 0, 0.9015, 12.0657, 8.5496, 5.6127)
+size = Vector3(1.76, 0.22, 1.43)
+material = SubResource("Mat_marble")
+
+[node name="FloatIsland2_front9" type="CSGBox3D" parent="Island" unique_id=694799681]
+transform = Transform3D(-0.799, 0, 0.6014, 0, 1, 0, -0.6014, 0, -0.799, -8.9585, 3.9895, 6.4185)
+size = Vector3(1.562, 0.452, 2.427)
+material = SubResource("Mat_stone")
+
+[node name="FloatIsland2_front9_Body" type="CSGBox3D" parent="Island" unique_id=1241562148]
+transform = Transform3D(-0.799, 0, 0.6014, 0, 1, 0, -0.6014, 0, -0.799, -8.9585, 5.3156, 6.4185)
+size = Vector3(0.9, 2.2, 0.9)
+material = SubResource("Mat_stone")
+
+[node name="FloatIsland2_front9_Cap" type="CSGBox3D" parent="Island" unique_id=170913477]
+transform = Transform3D(-0.799, 0, 0.6014, 0, 1, 0, -0.6014, 0, -0.799, -8.9585, 6.5656, 6.4185)
+size = Vector3(1.1, 0.3, 1.1)
+material = SubResource("Mat_stone")
+
+[node name="StairLink_A_Step0" type="CSGBox3D" parent="Island" unique_id=1964539756]
+transform = Transform3D(0.0712, 0, 0.9975, 0, 1, 0, -0.9975, 0, 0.0712, -3.56, 0.68, -6.34)
+size = Vector3(0.6, 0.15, 0.722)
+material = SubResource("Mat_marble")
+
+[node name="StairLink_A_Step1" type="CSGBox3D" parent="Island" unique_id=1489456632]
+transform = Transform3D(0.0712, 0, 0.9975, 0, 1, 0, -0.9975, 0, 0.0712, -3.5, 0.7, -5.5)
+size = Vector3(0.6, 0.15, 0.722)
+material = SubResource("Mat_marble")
+
+[node name="StairLink_A_Step2" type="CSGBox3D" parent="Island" unique_id=1068327650]
+transform = Transform3D(0.0712, 0, 0.9975, 0, 1, 0, -0.9975, 0, 0.0712, -3.44, 0.72, -4.66)
+size = Vector3(0.6, 0.15, 0.722)
+material = SubResource("Mat_marble")
+
+[node name="StairLink_A_Step3" type="CSGBox3D" parent="Island" unique_id=758748769]
+transform = Transform3D(0.0712, 0, 0.9975, 0, 1, 0, -0.9975, 0, 0.0712, -3.38, 0.74, -3.82)
+size = Vector3(0.6, 0.15, 0.722)
+material = SubResource("Mat_marble")
+
+[node name="StairLink_A_Step4" type="CSGBox3D" parent="Island" unique_id=978334665]
+transform = Transform3D(0.0712, 0, 0.9975, 0, 1, 0, -0.9975, 0, 0.0712, -3.32, 0.76, -2.98)
+size = Vector3(0.6, 0.15, 0.722)
+material = SubResource("Mat_marble")
+
+[node name="StairLink_A_Step5" type="CSGBox3D" parent="Island" unique_id=1251988286]
+transform = Transform3D(0.0712, 0, 0.9975, 0, 1, 0, -0.9975, 0, 0.0712, -3.26, 0.78, -2.14)
+size = Vector3(0.6, 0.15, 0.722)
+material = SubResource("Mat_marble")
+
+[node name="StairLink_A_Step6" type="CSGBox3D" parent="Island" unique_id=1958293918]
+transform = Transform3D(0.0712, 0, 0.9975, 0, 1, 0, -0.9975, 0, 0.0712, -3.2, 0.8, -1.3)
+size = Vector3(0.6, 0.15, 0.722)
+material = SubResource("Mat_marble")
+
+[node name="StairLink_B_Step0" type="CSGBox3D" parent="Island" unique_id=2055012483]
+transform = Transform3D(-0.095, 0, -0.9955, 0, 1, 0, 0.9955, 0, -0.095, 2.13, -0.635, 7.9)
+size = Vector3(0.6, 0.15, 0.737)
+material = SubResource("Mat_marble")
+
+[node name="StairLink_B_Step1" type="CSGBox3D" parent="Island" unique_id=529861386]
+transform = Transform3D(-0.095, 0, -0.9955, 0, 1, 0, 0.9955, 0, -0.095, 2.0513, -0.5181, 7.075)
+size = Vector3(0.6, 0.15, 0.737)
+material = SubResource("Mat_marble")
+
+[node name="StairLink_B_Step2" type="CSGBox3D" parent="Island" unique_id=2116607534]
+transform = Transform3D(-0.095, 0, -0.9955, 0, 1, 0, 0.9955, 0, -0.095, 1.9725, -0.4012, 6.25)
+size = Vector3(0.6, 0.15, 0.737)
+material = SubResource("Mat_marble")
+
+[node name="StairLink_B_Step3" type="CSGBox3D" parent="Island" unique_id=342042367]
+transform = Transform3D(-0.095, 0, -0.9955, 0, 1, 0, 0.9955, 0, -0.095, 1.8937, -0.2844, 5.425)
+size = Vector3(0.6, 0.15, 0.737)
+material = SubResource("Mat_marble")
+
+[node name="StairLink_B_Step4" type="CSGBox3D" parent="Island" unique_id=467085111]
+transform = Transform3D(-0.095, 0, -0.9955, 0, 1, 0, 0.9955, 0, -0.095, 1.815, -0.1675, 4.6)
+size = Vector3(0.6, 0.15, 0.737)
+material = SubResource("Mat_marble")
+
+[node name="StairLink_B_Step5" type="CSGBox3D" parent="Island" unique_id=1059595107]
+transform = Transform3D(-0.095, 0, -0.9955, 0, 1, 0, 0.9955, 0, -0.095, 1.7363, -0.0506, 3.775)
+size = Vector3(0.6, 0.15, 0.737)
+material = SubResource("Mat_marble")
+
+[node name="StairLink_B_Step6" type="CSGBox3D" parent="Island" unique_id=1641290294]
+transform = Transform3D(-0.095, 0, -0.9955, 0, 1, 0, 0.9955, 0, -0.095, 1.6575, 0.0663, 2.95)
+size = Vector3(0.6, 0.15, 0.737)
+material = SubResource("Mat_marble")
+
+[node name="StairLink_B_Step7" type="CSGBox3D" parent="Island" unique_id=745727920]
+transform = Transform3D(-0.095, 0, -0.9955, 0, 1, 0, 0.9955, 0, -0.095, 1.5787, 0.1831, 2.125)
+size = Vector3(0.6, 0.15, 0.737)
+material = SubResource("Mat_marble")
+
+[node name="StairLink_B_Step8" type="CSGBox3D" parent="Island" unique_id=1838513398]
+transform = Transform3D(-0.095, 0, -0.9955, 0, 1, 0, 0.9955, 0, -0.095, 1.5, 0.3, 1.3)
+size = Vector3(0.6, 0.15, 0.737)
+material = SubResource("Mat_marble")
+
+[node name="StairLink_C_Step0" type="CSGBox3D" parent="Island" unique_id=841262222]
+transform = Transform3D(-0.0292, 0, -0.9996, 0, 1, 0, 0.9996, 0, -0.0292, 4.04, 9.715, 5.79)
+size = Vector3(0.6, 0.15, 0.685)
+material = SubResource("Mat_marble")
+
+[node name="StairLink_C_Step1" type="CSGBox3D" parent="Island" unique_id=567459946]
+transform = Transform3D(-0.0292, 0, -0.9996, 0, 1, 0, 0.9996, 0, -0.0292, 4.0167, 9.5792, 4.9917)
+size = Vector3(0.6, 0.15, 0.685)
+material = SubResource("Mat_marble")
+
+[node name="StairLink_C_Step2" type="CSGBox3D" parent="Island" unique_id=1583247424]
+transform = Transform3D(-0.0292, 0, -0.9996, 0, 1, 0, 0.9996, 0, -0.0292, 3.9933, 9.4433, 4.1933)
+size = Vector3(0.6, 0.15, 0.685)
+material = SubResource("Mat_marble")
+
+[node name="StairLink_C_Step3" type="CSGBox3D" parent="Island" unique_id=288303217]
+transform = Transform3D(-0.0292, 0, -0.9996, 0, 1, 0, 0.9996, 0, -0.0292, 3.97, 9.3075, 3.395)
+size = Vector3(0.6, 0.15, 0.685)
+material = SubResource("Mat_marble")
+
+[node name="StairLink_C_Step4" type="CSGBox3D" parent="Island" unique_id=19353232]
+transform = Transform3D(-0.0292, 0, -0.9996, 0, 1, 0, 0.9996, 0, -0.0292, 3.9467, 9.1717, 2.5967)
+size = Vector3(0.6, 0.15, 0.685)
+material = SubResource("Mat_marble")
+
+[node name="StairLink_C_Step5" type="CSGBox3D" parent="Island" unique_id=1032949797]
+transform = Transform3D(-0.0292, 0, -0.9996, 0, 1, 0, 0.9996, 0, -0.0292, 3.9233, 9.0358, 1.7983)
+size = Vector3(0.6, 0.15, 0.685)
+material = SubResource("Mat_marble")
+
+[node name="StairLink_C_Step6" type="CSGBox3D" parent="Island" unique_id=713136210]
+transform = Transform3D(-0.0292, 0, -0.9996, 0, 1, 0, 0.9996, 0, -0.0292, 3.9, 8.9, 1)
+size = Vector3(0.6, 0.15, 0.685)
+material = SubResource("Mat_marble")
+
+[node name="OuterTower1_Body" type="CSGBox3D" parent="Island" unique_id=1347100771]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -10.29, 10.845, -5.38)
+size = Vector3(1.3, 3.5, 1.3)
+material = SubResource("Mat_stone")
+
+[node name="OuterTower1_ArchCut" type="CSGCylinder3D" parent="Island" unique_id=228295551]
+transform = Transform3D(1, 0, 0, 0, 0, 1, 0, -1, 0, -10.29, 10.845, -5.38)
+operation = 2
+radius = 0.4
+height = 1.8
+smooth_faces = false
+
+[node name="OuterTower1_Cap" type="CSGBox3D" parent="Island" unique_id=1742285659]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -10.29, 12.77, -5.38)
+size = Vector3(1.6, 0.35, 1.6)
+material = SubResource("Mat_stone")
+
+[node name="OuterTower2_Body" type="CSGBox3D" parent="Island" unique_id=244015035]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -12.17, 3.5, -5.97)
+size = Vector3(1.3, 3.5, 1.3)
+material = SubResource("Mat_stone")
+
+[node name="OuterTower2_ArchCut" type="CSGCylinder3D" parent="Island" unique_id=1063533431]
+transform = Transform3D(1, 0, 0, 0, 0, 1, 0, -1, 0, -12.17, 3.5, -5.97)
+operation = 2
+radius = 0.4
+height = 1.8
+smooth_faces = false
+
+[node name="OuterTower2_Cap" type="CSGBox3D" parent="Island" unique_id=1857650887]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -12.17, 5.425, -5.97)
+size = Vector3(1.6, 0.35, 1.6)
+material = SubResource("Mat_stone")
+
+[node name="OuterTower3_Body" type="CSGBox3D" parent="Island" unique_id=1225698643]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 11.54, 4.755, 9.1)
+size = Vector3(1.3, 3.5, 1.3)
+material = SubResource("Mat_stone")
+
+[node name="OuterTower3_ArchCut" type="CSGCylinder3D" parent="Island" unique_id=82602964]
+transform = Transform3D(1, 0, 0, 0, 0, 1, 0, -1, 0, 11.54, 4.755, 9.1)
+operation = 2
+radius = 0.4
+height = 1.8
+smooth_faces = false
+
+[node name="OuterTower3_Cap" type="CSGBox3D" parent="Island" unique_id=1685852293]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 11.54, 6.68, 9.1)
+size = Vector3(1.6, 0.35, 1.6)
+material = SubResource("Mat_stone")
+
+[node name="OuterTower4_Body" type="CSGBox3D" parent="Island" unique_id=1317313339]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -9.93, 8.185, 9.86)
+size = Vector3(1.3, 3.5, 1.3)
+material = SubResource("Mat_stone")
+
+[node name="OuterTower4_ArchCut" type="CSGCylinder3D" parent="Island" unique_id=1767713593]
+transform = Transform3D(1, 0, 0, 0, 0, 1, 0, -1, 0, -9.93, 8.185, 9.86)
+operation = 2
+radius = 0.4
+height = 1.8
+smooth_faces = false
+
+[node name="OuterTower4_Cap" type="CSGBox3D" parent="Island" unique_id=322590964]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -9.93, 10.11, 9.86)
+size = Vector3(1.6, 0.35, 1.6)
+material = SubResource("Mat_stone")
+
+[node name="PortalDoor" parent="Island" unique_id=1813456568 instance=ExtResource("ext_portal_door")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3.0683203, 3.620001, 0.6267061)
+
+[node name="PortalDoor2" parent="Island" unique_id=729001563 instance=ExtResource("ext_portal_door")]
+transform = Transform3D(-4.371139e-08, 0, 1, 0, 1, 0, -1, 0, -4.371139e-08, 4.6926737, 9.72, 0.020305634)
+
+[node name="PortalDoor3" parent="Island" unique_id=776035805 instance=ExtResource("ext_portal_door")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 11.33296, 7.674998, 9.417396)
+
+[node name="PortalDoor4" parent="Island" unique_id=1306515645 instance=ExtResource("ext_portal_door")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -5.764816, 6.786698, 11.306258)
+
+[node name="PortalDoor5" parent="Island" unique_id=1168989954 instance=ExtResource("ext_portal_door")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -9.034702, 9.809049, -0.0554049)
+
+[node name="PortalDoor6" parent="Island" unique_id=1437059064 instance=ExtResource("ext_portal_door")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 10.496064, 9.978501, -5.961759)
+
+[node name="PortalDoor7" parent="Island" unique_id=1742148461 instance=ExtResource("ext_portal_door")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.32932317, 11.088901, 11.2048)
+
+[node name="Coin2" parent="Island" unique_id=139890137 instance=ExtResource("ext_coin")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.6850758, 9.815568, -0.020357013)
+
+[node name="Coin3" parent="Island" unique_id=1743861178 instance=ExtResource("ext_coin")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.5696802, 11.586126, 10.142292)
+
+[node name="Coin4" parent="Island" unique_id=2049213200 instance=ExtResource("ext_coin")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -9.054867, 9.149997, -0.7276079)
+
+[node name="Coin5" parent="Island" unique_id=1086723832 instance=ExtResource("ext_coin")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 9.7781515, 9.804479, -5.973097)
+
+[node name="Coin6" parent="Island" unique_id=1449735753 instance=ExtResource("ext_coin")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 11.674156, 7.4286556, 8.865395)
